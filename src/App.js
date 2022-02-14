@@ -1,25 +1,63 @@
 import React from 'react';
-import logo from './logo.svg';
+import 'bulma/css/bulma.css';
 import './App.css';
+import foods from './foods.json';
+import FoodBox from './components/FoodBox';
+import AddFood from './components/AddFood.jsx';
+import { useState } from 'react';
 
 function App() {
+  const [searchTerm, setSearchedTerm] = useState('');
+  const [checkoutData, setCheckout] = useState([]);
+
+  function handleClick(food, quantity) {
+    let checkoutBook = {
+      name: food.name,
+      quantity: quantity,
+      calories: food.calories,
+    };
+    setCheckout([checkoutBook, ...checkoutData]);
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <div>
+        <input
+          placeholder="Enter Food to search"
+          onChange={(event) => setSearchedTerm(event.target.value)}
+        />
+        {foods
+          .filter((food) => {
+            if (searchTerm === '') {
+              return food;
+            } else if (
+              food.name.toLowerCase().includes(searchTerm.toLowerCase())
+            ) {
+              return (
+                <p>
+                  <FoodBox
+                    name={food.name}
+                    calories={food.calories}
+                    image={food.image}
+                  />
+                </p>
+              );
+            }
+          })
+          .map((food, index) => (
+            <div className="box" key={index}>
+              <p>
+                <FoodBox
+                  name={food.name}
+                  calories={food.calories}
+                  image={food.image}
+                />
+              </p>
+            </div>
+          ))}
+      </div>
+      <AddFood />
+    </>
   );
 }
 
